@@ -9,7 +9,7 @@ from eth.vm.forks.petersburg.opcodes import PETERSBURG_OPCODES
 from eth.vm.forks.istanbul.opcodes import ISTANBUL_OPCODES
 from eth.vm.forks.muir_glacier.opcodes import MUIR_GLACIER_OPCODES
 
-FORK_OPCODES = {
+PY_EVM_FORKS = {
     Fork.Frontier: FRONTIER_OPCODES,
     Fork.Homestead: HOMESTEAD_OPCODES,
     Fork.TangerineWhistle: TANGERINE_WHISTLE_OPCODES,

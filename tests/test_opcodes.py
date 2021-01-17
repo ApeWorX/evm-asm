@@ -1,11 +1,11 @@
 import inspect
 import forks.forks as forks
-from tests import FORK_OPCODES
+from tests import PY_EVM_FORKS
 
 
 def test_forks():
     # for each fork in py-evm
-    for key, value in FORK_OPCODES.items():
+    for key, value in PY_EVM_FORKS.items():
         # get the according fork from our factory
         fork = forks.get(key)
 
@@ -26,9 +26,7 @@ def test_forks():
             mnemonic = props.mnemonic.upper()
 
             # check that we have a matching opcode
-            assert evm_opcodes.__contains__(
-                mnemonic
-            ), f"mnemonic {mnemonic} not in evm_opcodes"
+            assert mnemonic in evm_opcodes, f"mnemonic {mnemonic} not in evm_opcodes"
             # prune our list
             evm_opcodes.remove(mnemonic)
             # fetch the opcode
@@ -42,7 +40,5 @@ def test_forks():
             ), f"opcode {mnemonic} gas cost does not match for {key}"
 
         print(*evm_opcodes, sep="\n")
-        print(evm_opcodes.__len__())
-        assert (
-            evm_opcodes.__len__() == 0
-        ), f"{key} has an opcode that is not found in py-evm"
+        print(len(evm_opcodes))
+        assert len(evm_opcodes) == 0, f"{key} has an opcode that is not found in py-evm"

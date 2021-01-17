@@ -14,7 +14,7 @@ from eth.vm.forks.petersburg.opcodes import PETERSBURG_OPCODES
 from eth.vm.forks.istanbul.opcodes import ISTANBUL_OPCODES
 from eth.vm.forks.muir_glacier.opcodes import MUIR_GLACIER_OPCODES
 
-FORK_OPCODES = {
+PY_EVM_FORKS = {
     "frontier": FRONTIER_OPCODES,
     "homestead": HOMESTEAD_OPCODES,
     "tangerine_whistle": TANGERINE_WHISTLE_OPCODES,
@@ -29,7 +29,7 @@ FORK_OPCODES = {
 previous_key = ""
 previous = "ForkBase"
 
-for key, value in FORK_OPCODES.items():
+for key, value in PY_EVM_FORKS.items():
     split = key.split("_")
 
     current = "".join(x.title() for x in split)

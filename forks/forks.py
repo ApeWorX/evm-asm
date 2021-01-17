@@ -22,7 +22,7 @@ class Fork(Enum):
     MuirGlacier = 9
 
 
-FORK_OPCODES = {
+EVM_FORKS = {
     Fork.Frontier: Frontier,
     Fork.Homestead: Homestead,
     Fork.TangerineWhistle: TangerineWhistle,
@@ -43,4 +43,4 @@ def get(fork):
     if not isinstance(fork, Fork):
         raise TypeError("fork must be an instance of Fork Enum")
 
-    return FORK_OPCODES[fork](fork)
+    return EVM_FORKS[fork](fork)
