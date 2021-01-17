@@ -10,13 +10,13 @@ from eth.vm.forks.istanbul.opcodes import ISTANBUL_OPCODES
 from eth.vm.forks.muir_glacier.opcodes import MUIR_GLACIER_OPCODES
 
 FORK_OPCODES = {
-    Fork.Frontier : FRONTIER_OPCODES,
-    Fork.Homestead : HOMESTEAD_OPCODES,
-    Fork.TangerineWhistle : TANGERINE_WHISTLE_OPCODES,
-    Fork.SpuriousDragon : SPURIOUS_DRAGON_OPCODES,
-    Fork.Byzantium : BYZANTIUM_OPCODES,
-    Fork.Constantinople : CONSTANTINOPLE_OPCODES,
-    Fork.Petersburg : PETERSBURG_OPCODES,
-    Fork.Istanbul : ISTANBUL_OPCODES,
-    Fork.MuirGlacier : MUIR_GLACIER_OPCODES,
+    Fork.Frontier: FRONTIER_OPCODES,
+    Fork.Homestead: HOMESTEAD_OPCODES,
+    Fork.TangerineWhistle: TANGERINE_WHISTLE_OPCODES,
+    Fork.SpuriousDragon: SPURIOUS_DRAGON_OPCODES,
+    Fork.Byzantium: BYZANTIUM_OPCODES,
+    Fork.Constantinople: CONSTANTINOPLE_OPCODES,
+    Fork.Petersburg: PETERSBURG_OPCODES,
+    Fork.Istanbul: ISTANBUL_OPCODES,
+    Fork.MuirGlacier: MUIR_GLACIER_OPCODES,
 }

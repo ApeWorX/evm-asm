@@ -15,53 +15,53 @@ from eth.vm.forks.istanbul.opcodes import ISTANBUL_OPCODES
 from eth.vm.forks.muir_glacier.opcodes import MUIR_GLACIER_OPCODES
 
 FORK_OPCODES = {
-    'frontier' : FRONTIER_OPCODES,
-    'homestead' : HOMESTEAD_OPCODES,
-    'tangerine_whistle' : TANGERINE_WHISTLE_OPCODES,
-    'spurious_dragon' : SPURIOUS_DRAGON_OPCODES,
-    'byzantium' : BYZANTIUM_OPCODES,
-    'constantinople' : CONSTANTINOPLE_OPCODES,
-    'petersburg' : PETERSBURG_OPCODES,
-    'istanbul' : ISTANBUL_OPCODES,
-    'muir_glacier' : MUIR_GLACIER_OPCODES,
+    "frontier": FRONTIER_OPCODES,
+    "homestead": HOMESTEAD_OPCODES,
+    "tangerine_whistle": TANGERINE_WHISTLE_OPCODES,
+    "spurious_dragon": SPURIOUS_DRAGON_OPCODES,
+    "byzantium": BYZANTIUM_OPCODES,
+    "constantinople": CONSTANTINOPLE_OPCODES,
+    "petersburg": PETERSBURG_OPCODES,
+    "istanbul": ISTANBUL_OPCODES,
+    "muir_glacier": MUIR_GLACIER_OPCODES,
 }
 
-previous_key = ''
-previous = 'ForkBase'
+previous_key = ""
+previous = "ForkBase"
 
 for key, value in FORK_OPCODES.items():
-    split = key.split('_')
+    split = key.split("_")
 
-    current = ''.join(x.title() for x in split)
+    current = "".join(x.title() for x in split)
 
     original_stdout = sys.stdout
-    with open(f'../forks/{key}.py', 'w') as f:
+    with open(f"../forks/{key}.py", "w") as f:
         sys.stdout = f
 
         # If we're on frontier, inherit the base class
-        if (key == 'frontier'):
-            print('from .fork_base import ForkBase')
-        elif (key== 'petersburg'):
-            print('from .byzantium import Byzantium')
+        if key == "frontier":
+            print("from .fork_base import ForkBase")
+        elif key == "petersburg":
+            print("from .byzantium import Byzantium")
         else:
-            print(f'from .{previous_key} import {previous}')
+            print(f"from .{previous_key} import {previous}")
 
-        print('from opcodes.opcode import Opcode')
+        print("from opcodes.opcode import Opcode")
         print()
 
         # petersburg is a special case
-        if key == 'petersburg':
-            print(f'class {current}(Byzantium):')
+        if key == "petersburg":
+            print(f"class {current}(Byzantium):")
         else:
-            print(f'class {current}({previous}):')
-        
+            print(f"class {current}({previous}):")
+
         for opcode, props in value.items():
             mnemonic = props.mnemonic.upper()
-            print(f'    {mnemonic} = Opcode(\'{mnemonic}\', {props.gas_cost}, {"0x{:02x}".format(opcode)})')
+            print(
+                f'    {mnemonic} = Opcode(\'{mnemonic}\', {props.gas_cost}, {"0x{:02x}".format(opcode)})'
+            )
 
         sys.stdout = original_stdout
 
     previous = current
     previous_key = key
-
-   
