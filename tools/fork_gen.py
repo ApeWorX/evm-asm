@@ -48,6 +48,7 @@ for key, value in FORK_OPCODES.items():
 
         print("from opcodes.opcode import Opcode")
         print()
+        print()
 
         # petersburg is a special case
         if key == "petersburg":
@@ -58,7 +59,7 @@ for key, value in FORK_OPCODES.items():
         for opcode, props in value.items():
             mnemonic = props.mnemonic.upper()
             print(
-                f'    {mnemonic} = Opcode(\'{mnemonic}\', {props.gas_cost}, {"0x{:02x}".format(opcode)})'
+                f'    {mnemonic} = Opcode("{mnemonic}", {props.gas_cost}, {"0x{:02X}".format(opcode)})'
             )
 
         sys.stdout = original_stdout
