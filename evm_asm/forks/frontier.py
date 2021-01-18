@@ -1,5 +1,5 @@
 from .fork_base import ForkBase
-from opcodes.opcode import Opcode
+from evm_asm.opcodes.opcode import Opcode
 
 
 class Frontier(ForkBase):

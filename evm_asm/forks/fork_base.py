@@ -1,4 +1,4 @@
-import forks
+import evm_asm.forks.forks
 
 
 class ForkBase:

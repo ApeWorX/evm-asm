@@ -37,7 +37,7 @@ for key, value in PY_EVM_FORKS.items():
     current = "".join(x.title() for x in split)
 
     original_stdout = sys.stdout
-    with open(f"../forks/{key}.py", "w") as f:
+    with open(f"../evm_asm/forks/{key}.py", "w") as f:
         sys.stdout = f
 
         # If we're on frontier, inherit the base class
@@ -49,7 +49,7 @@ for key, value in PY_EVM_FORKS.items():
         else:
             print(f"from .{previous_key} import {previous}")
 
-        print("from opcodes.opcode import Opcode")
+        print("from evm_asm.opcodes.opcode import Opcode")
         print()
         print()
 

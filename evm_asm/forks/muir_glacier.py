@@ -1,5 +1,5 @@
 from .istanbul import Istanbul
-from opcodes.opcode import Opcode
+from evm_asm.opcodes.opcode import Opcode
 
 
 class MuirGlacier(Istanbul):

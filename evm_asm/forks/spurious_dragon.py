@@ -1,5 +1,5 @@
 from .tangerine_whistle import TangerineWhistle
-from opcodes.opcode import Opcode
+from evm_asm.opcodes.opcode import Opcode
 
 
 class SpuriousDragon(TangerineWhistle):

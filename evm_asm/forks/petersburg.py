@@ -1,5 +1,5 @@
 from .byzantium import Byzantium
-from opcodes.opcode import Opcode
+from evm_asm.opcodes.opcode import Opcode
 
 
 class Petersburg(Byzantium):

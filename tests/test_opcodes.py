@@ -1,5 +1,5 @@
 import inspect
-import forks.forks as forks
+import evm_asm.forks.forks as forks
 from tests import PY_EVM_FORKS
 
 

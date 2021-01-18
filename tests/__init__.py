@@ -1,4 +1,4 @@
-from forks.forks import Fork
+from evm_asm.forks.forks import Fork
 from eth.vm.forks.frontier.opcodes import FRONTIER_OPCODES
 from eth.vm.forks.homestead.opcodes import HOMESTEAD_OPCODES
 from eth.vm.forks.tangerine_whistle.opcodes import TANGERINE_WHISTLE_OPCODES
