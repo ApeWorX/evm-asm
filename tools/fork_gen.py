@@ -29,6 +29,8 @@ PY_EVM_FORKS = {
 previous_key = ""
 previous = "ForkBase"
 
+used_opcodes = {}
+
 for key, value in PY_EVM_FORKS.items():
     split = key.split("_")
 
@@ -41,6 +43,7 @@ for key, value in PY_EVM_FORKS.items():
         # If we're on frontier, inherit the base class
         if key == "frontier":
             print("from .fork_base import ForkBase")
+        # petersburg is a special case
         elif key == "petersburg":
             print("from .byzantium import Byzantium")
         else:
@@ -50,17 +53,31 @@ for key, value in PY_EVM_FORKS.items():
         print()
         print()
 
-        # petersburg is a special case
         if key == "petersburg":
-            print(f"class {current}(Byzantium):")
-        else:
-            print(f"class {current}({previous}):")
+            previous = "Byzantium"
 
+        print(f"class {current}({previous}):")
+
+        lines = 0
         for opcode, props in value.items():
             mnemonic = props.mnemonic.upper()
-            print(
-                f'    {mnemonic} = Opcode("{mnemonic}", {props.gas_cost}, {"0x{:02X}".format(opcode)})'
-            )
+            if (
+                mnemonic not in used_opcodes.keys()
+                or used_opcodes[mnemonic] != props.gas_cost
+            ):
+                print(
+                    f'    {mnemonic} = Opcode("{mnemonic}", {props.gas_cost}, {"0x{:02X}".format(opcode)})'
+                )
+                # don't update if constantinople, petersburg is also based off byzantium and will add them
+                if key != "constantinople":
+                    used_opcodes[mnemonic] = props.gas_cost
+                lines += 1
+            else:
+                print(f"    {mnemonic} = {previous}.{mnemonic}")
+                lines += 1
+
+        if lines == 0:
+            print("    pass")
 
         sys.stdout = original_stdout
 
