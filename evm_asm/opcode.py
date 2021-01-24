@@ -1,3 +1,5 @@
+from typing import Optional
+
 from dataclasses import dataclass
 
 # TODO https://ethervm.io/
@@ -11,6 +13,7 @@ class Opcode:
     mnemonic: str
     gas_cost: int
     opcode_value: int
+    input_size_bytes: Optional[int] = 0
 
     def __str__(self):
-        return self.mnemonic
+        return f"{self.mnemonic}"
