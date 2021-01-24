@@ -6,6 +6,7 @@ from setuptools import setup, find_packages
 
 extras_require = {
     "test": [
+        "py-evm==0.3.0a20",
         "pytest==6.2.1",
         "pytest-xdist",
         "pytest-coverage",
@@ -22,8 +23,7 @@ extras_require = {
         "sphinx_rtd_theme>=0.5.1",
     ],
     "dev": [
-        "py-evm==0.3.0a20",
-        "pytest-watch>=4.2.0,<5",
+        "pytest-watch",
         "wheel",
         "twine",
         "ipython",
