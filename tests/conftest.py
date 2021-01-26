@@ -3,6 +3,13 @@ import pytest
 from eth.vm import forks as pyevm_forks
 
 
+@pytest.fixture(scope="session")
+def w3():
+    from web3.auto.infura.mainnet import w3
+
+    yield w3
+
+
 @pytest.fixture(
     params=[
         "frontier",
