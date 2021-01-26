@@ -66,3 +66,41 @@ class Fork:
                 )
         else:
             raise TypeError(f"Unsupported type '{type(opcode_ref)}'")
+
+    def assemble(self, assembly: Assembly) -> Bytecode:
+        bytecode = bytearray(b"")
+        assembly_iter = iter(assembly)
+
+        for code in assembly_iter:
+            if isinstance(code, str):
+                code = self[code]  # convert mnemonic to opcode
+            elif not isinstance(code, Opcode):
+                raise InvalidOpcodeInput(f"'{code}' is not a mnemonic or opcode")
+
+            bytecode.append(code.opcode_value)
+
+            if code.input_size_bytes > 0:
+                input_value = next(assembly_iter)
+                if not isinstance(input_value, int):
+                    raise InvalidOpcodeInput(f"Input must be int, not: '{input_value}'")
+                elif 0 <= input_value < 2 ** (8 * code.input_size_bytes):
+                    bytecode.extend(
+                        (input_value).to_bytes(code.input_size_bytes, "big")
+                    )
+                else:
+                    raise InvalidOpcodeInput(f"Input out of range: '{input_value}'")
+
+        return Bytecode(bytecode)
+
+    def disassemble(self, bytecode: Bytecode) -> Assembly:
+        bytecode_iter = iter(bytecode)
+
+        for code in bytecode_iter:
+            opcode = self[OpcodeValue(code)]
+            yield opcode
+
+            if opcode.input_size_bytes > 0:
+                input_bytes = bytes(
+                    [next(bytecode_iter) for _ in range(opcode.input_size_bytes)]
+                )
+                yield int.from_bytes(input_bytes, "big")
