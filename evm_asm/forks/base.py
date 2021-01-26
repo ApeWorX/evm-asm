@@ -4,7 +4,15 @@ import re
 from collections import OrderedDict
 
 
-from evm_asm.typing import Assembly, Bytecode, Mnemonic, Opcode, OpcodeLike, OpcodeValue
+from evm_asm.typing import (
+    Assembly,
+    Bytecode,
+    Metadata,
+    Mnemonic,
+    Opcode,
+    OpcodeLike,
+    OpcodeValue,
+)
 
 
 class UnsupportedOpcode(ValueError):
@@ -92,11 +100,39 @@ class Fork:
 
         return Bytecode(bytecode)
 
+    def _split_metadata(self, bytecode: Bytecode) -> Tuple[Bytecode, Metadata]:
+        breakpoint()
+        # Pattern is `(0xa1|0xa2).*0x00.`, so 2nd to last byte must be 0x00
+        if bytecode[-2] != 0:
+            return bytecode, Metadata(b"")
+
+        metadata_length = int.from_bytes(bytecode[-1:], "big") + 2
+        # 0xa1, 0xa2 are known Solidity metadata start codes
+        if bytecode[-metadata_length] in (161, 162):
+            return (
+                Bytecode(bytecode[:-metadata_length]),
+                Metadata(bytecode[-metadata_length:]),
+            )
+        else:
+            return bytecode, Metadata(b"")
+
+    def get_metadata(self, bytecode: Bytecode) -> Metadata:
+        _, metadata = self._split_metadata(bytecode)
+        return metadata
+
     def disassemble(self, bytecode: Bytecode) -> Assembly:
+        bytecode, _ = self._split_metadata(bytecode)
+
         bytecode_iter = iter(bytecode)
 
         for code in bytecode_iter:
-            opcode = self[OpcodeValue(code)]
+            try:
+                opcode = self[OpcodeValue(code)]
+            except UnsupportedOpcode as e:
+                unprocessed_bytecode = bytes([code, *bytecode_iter])
+                raise ValueError(
+                    f"Could not parse '0x{unprocessed_bytecode.hex()}'"
+                ) from e
             yield opcode
 
             if opcode.input_size_bytes > 0:

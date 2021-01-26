@@ -4,6 +4,7 @@ from typing import Iterable, Optional, NewType, Union
 
 # TODO https://ethervm.io/
 
+Metadata = NewType("Metadata", bytes)
 Bytecode = NewType("Bytecode", bytes)
 
 Mnemonic = NewType("Mnemonic", str)
