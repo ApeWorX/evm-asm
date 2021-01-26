@@ -93,7 +93,8 @@ class Fork:
                     254,  # INVALID
                 )
             ):
-                bytecode.extend(code)
+                if len(code) > 0:
+                    bytecode.extend(code)
                 continue  # These are special cases
 
             elif isinstance(code, str):
@@ -195,5 +196,8 @@ class Fork:
                     [next(bytecode_iter) for _ in range(opcode.input_size_bytes)]
                 )
 
-        yield string_literals  # String literals are at the end of the code
-        yield metadata  # Metadata exists past the end of the code
+        if len(string_literals) > 0:
+            yield string_literals  # String literals are at the end of the code
+
+        if len(metadata) > 0:
+            yield metadata  # Metadata exists past the end of the code
