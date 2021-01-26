@@ -1,5 +1,5 @@
 from .petersburg import Petersburg
-from evm_asm.opcode import Opcode
+from evm_asm.typing import Opcode
 
 
 class Istanbul(Petersburg):
