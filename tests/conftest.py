@@ -1,6 +1,7 @@
 import pytest
 
 from eth.vm import forks as pyevm_forks
+from evm_asm import evm_opcodes
 
 
 @pytest.fixture(scope="session")
@@ -10,19 +11,7 @@ def w3():
     yield w3
 
 
-@pytest.fixture(
-    params=[
-        "frontier",
-        "homestead",
-        "tangerine_whistle",
-        "spurious_dragon",
-        "byzantium",
-        "constantinople",
-        "petersburg",
-        "istanbul",
-        "muir_glacier",
-    ]
-)
+@pytest.fixture(params=[*evm_opcodes.forks()])
 def fork_name(request):
     yield request.param
 

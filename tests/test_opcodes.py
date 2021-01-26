@@ -1,8 +1,8 @@
-from evm_asm.forks import get_version
+from evm_asm import evm_opcodes
 
 
 def test_forks(fork_name, fork_expected_opcodes):
-    fork_opcodes = get_version(fork_name)
+    fork_opcodes = evm_opcodes[fork_name]
     assert len(fork_opcodes) == len(fork_expected_opcodes)
     for opcode_value, opcode in fork_expected_opcodes.items():
         assert (

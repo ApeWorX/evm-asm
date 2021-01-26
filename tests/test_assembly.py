@@ -1,6 +1,6 @@
 import pytest
 
-from evm_asm.forks import get_version
+from evm_asm import assemble, disassemble, evm_opcodes
 
 
 # NOTE: Pick the fork the contracts were compiled with
@@ -16,6 +16,6 @@ from evm_asm.forks import get_version
     ],
 )
 def test_assembly(w3, evm_version, contract_address):
-    evm = get_version(evm_version)
+    evm = evm_opcodes[evm_version]
     code = w3.eth.getCode(contract_address)
-    assert evm.assemble(evm.disassemble(code)) == code
+    assert assemble(evm, disassemble(evm, code)) == code

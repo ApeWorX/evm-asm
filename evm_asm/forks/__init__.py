@@ -1,6 +1,4 @@
-from typing import Union
-
-from enum import Enum
+from typing import Iterator
 
 from .base import Fork
 
@@ -15,51 +13,46 @@ from .istanbul import Istanbul
 from .muir_glacier import MuirGlacier
 
 
-class EvmVersion(Enum):
-    FRONTIER = 1
-    HOMESTEAD = 2
-    TANGERINE_WHISTLE = 3
-    SPURIOUS_DRAGON = 4
-    BYZANTIUM = 5
-    CONSTANTINOPLE = 6
-    PETERSBURG = 7
-    ISTANBUL = 8
-    MUIR_GLACIER = 9
+class EvmForks:
+    FRONTIER = Frontier()
+    HOMESTEAD = Homestead()
+    TANGERINE_WHISTLE = TangerineWhistle()
+    SPURIOUS_DRAGON = SpuriousDragon()
+    BYZANTIUM = Byzantium()
+    CONSTANTINOPLE = Constantinople()
+    PETERSBURG = Petersburg()
+    ISTANBUL = Istanbul()
+    MUIR_GLACIER = MuirGlacier()
 
-    @classmethod
-    def get_version(cls, version_name: str) -> "EvmVersion":
-        for name, val in cls.__members__.items():
-            if version_name.upper() == name:
-                return val
+    def forks(self) -> Iterator[str]:
+        for attr in dir(self):
+            if isinstance(getattr(self, attr), Fork):
+                yield attr.lower()
 
-        versions = (f.lower() for f in cls.__members__.keys())
+    def __iter__(self) -> Iterator[Fork]:
+        forks = [getattr(self, f.upper()) for f in self.forks()]
+        forks.sort()
+        return iter(forks)
+
+    def __len__(self) -> int:
+        return len(list(self.forks()))
+
+    def __getitem__(self, fork_name: str) -> Fork:
+        forks = tuple(self.forks())
+        if fork_name in forks:
+            return getattr(self, fork_name.upper())
+
         raise TypeError(
-            f"'{version_name}' is not a valid fork name, must be one of '{versions}'"
+            f"'{fork_name}' is not a valid fork name, must be one of '{forks}'"
         )
 
 
-EVM_VERSIONS = {
-    EvmVersion.FRONTIER: Frontier,
-    EvmVersion.HOMESTEAD: Homestead,
-    EvmVersion.TANGERINE_WHISTLE: TangerineWhistle,
-    EvmVersion.SPURIOUS_DRAGON: SpuriousDragon,
-    EvmVersion.BYZANTIUM: Byzantium,
-    EvmVersion.CONSTANTINOPLE: Constantinople,
-    EvmVersion.PETERSBURG: Petersburg,
-    EvmVersion.ISTANBUL: Istanbul,
-    EvmVersion.MUIR_GLACIER: MuirGlacier,
-}
-LATEST_VERSION = EvmVersion.MUIR_GLACIER
+evm_opcodes = EvmForks()
+LATEST_VERSION = evm_opcodes.MUIR_GLACIER
 
 
-def get_version(version: Union[str, EvmVersion] = LATEST_VERSION) -> Fork:
-    """
-    Factory method for building forks
-    """
-    if isinstance(version, str):
-        version = EvmVersion.get_version(version)
-
-    if isinstance(version, EvmVersion):
-        return EVM_VERSIONS[version]()
-    else:
-        raise TypeError("fork must be an instance of Fork Enum")
+__all__ = [
+    "LATEST_VERSION",
+    "Fork",
+    "evm_opcodes",
+]
