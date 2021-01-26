@@ -1,4 +1,4 @@
-from typing import Dict, Iterator, Tuple
+from typing import Dict, Iterator, Optional, Tuple
 
 import re
 from collections import OrderedDict
@@ -79,29 +79,57 @@ class Fork:
         bytecode = bytearray(b"")
         assembly_iter = iter(assembly)
 
+        last_opcode = None
         for code in assembly_iter:
-            if isinstance(code, str):
+            # Check if string literals or metadata included after end of code
+            if (
+                isinstance(code, bytes)
+                and last_opcode
+                and last_opcode.opcode_value
+                in (
+                    0,  # STOP
+                    243,  # RETURN
+                    254,  # INVALID
+                )
+            ):
+                bytecode.extend(code)
+                continue  # These are special cases
+
+            elif isinstance(code, str):
                 code = self[code]  # convert mnemonic to opcode
+
             elif not isinstance(code, Opcode):
-                raise InvalidOpcodeInput(f"'{code}' is not a mnemonic or opcode")
+                raise InvalidOpcodeInput(f"'{code!r}' is not a mnemonic or opcode")
 
             bytecode.append(code.opcode_value)
 
             if code.input_size_bytes > 0:
                 input_value = next(assembly_iter)
-                if not isinstance(input_value, int):
-                    raise InvalidOpcodeInput(f"Input must be int, not: '{input_value}'")
-                elif 0 <= input_value < 2 ** (8 * code.input_size_bytes):
+                if (
+                    isinstance(input_value, bytes)
+                    # bytes must be equal to it's size
+                    and len(input_value) == code.input_size_bytes
+                ):
+                    bytecode.extend(input_value)
+                elif (
+                    isinstance(input_value, int)
+                    # integer must be unsigned and LEQ it's size
+                    and 0 <= input_value < 2 ** (8 * code.input_size_bytes)
+                ):
                     bytecode.extend(
                         (input_value).to_bytes(code.input_size_bytes, "big")
                     )
                 else:
-                    raise InvalidOpcodeInput(f"Input out of range: '{input_value}'")
+                    raise InvalidOpcodeInput(
+                        f"Input must be int or bytes of size '{code.input_size_bytes}',"
+                        " not: '{input_value}'"
+                    )
+
+            last_opcode = code
 
         return Bytecode(bytecode)
 
     def _split_metadata(self, bytecode: Bytecode) -> Tuple[Bytecode, Metadata]:
-        breakpoint()
         # Pattern is `(0xa1|0xa2).*0x00.`, so 2nd to last byte must be 0x00
         if bytecode[-2] != 0:
             return bytecode, Metadata(b"")
@@ -116,12 +144,37 @@ class Fork:
         else:
             return bytecode, Metadata(b"")
 
+    def _split_string_literals(self, bytecode: Bytecode) -> Tuple[Bytecode, bytes]:
+        reversed_bytecode = bytearray(bytecode)
+        reversed_bytecode.reverse()
+
+        for idx, code in enumerate(reversed_bytecode):
+            # Record the last "stop" opcode (a contract must end in one of these)
+            if code in (
+                0,  # STOP
+                243,  # RETURN
+                254,  # INVALID
+            ):
+                # NOTE: Index is from end of bytecode
+                last_stopcode_idx = len(bytecode) - idx
+
+            if code == 0:
+                continue  # Could be padding bytes
+
+            # String must be in the printable ASCII range to work in Solidity
+            if code not in range(32, 127):
+                break
+
+        # Return the code up to the last "stop" opcode prior to a big string sequence
+        return Bytecode(bytecode[:last_stopcode_idx]), bytecode[last_stopcode_idx:]
+
     def get_metadata(self, bytecode: Bytecode) -> Metadata:
         _, metadata = self._split_metadata(bytecode)
         return metadata
 
     def disassemble(self, bytecode: Bytecode) -> Assembly:
-        bytecode, _ = self._split_metadata(bytecode)
+        bytecode, metadata = self._split_metadata(bytecode)
+        bytecode, string_literals = self._split_string_literals(bytecode)
 
         bytecode_iter = iter(bytecode)
 
@@ -136,7 +189,9 @@ class Fork:
             yield opcode
 
             if opcode.input_size_bytes > 0:
-                input_bytes = bytes(
+                yield bytes(
                     [next(bytecode_iter) for _ in range(opcode.input_size_bytes)]
                 )
-                yield int.from_bytes(input_bytes, "big")
+
+        yield string_literals  # String literals are at the end of the code
+        yield metadata  # Metadata exists past the end of the code

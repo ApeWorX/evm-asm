@@ -39,4 +39,4 @@ class Opcode:
 
 
 OpcodeLike = Union[Opcode, Mnemonic, OpcodeValue]
-Assembly = Iterable[Union[OpcodeLike, int]]
+Assembly = Iterable[Union[OpcodeLike, int, bytes]]
