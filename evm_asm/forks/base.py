@@ -89,6 +89,7 @@ class Fork:
                 in (
                     0,  # STOP
                     243,  # RETURN
+                    253,  # REVERT
                     254,  # INVALID
                 )
             ):
@@ -153,6 +154,7 @@ class Fork:
             if code in (
                 0,  # STOP
                 243,  # RETURN
+                253,  # REVERT
                 254,  # INVALID
             ):
                 # NOTE: Index is from end of bytecode
