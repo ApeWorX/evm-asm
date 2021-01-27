@@ -1,5 +1,5 @@
 from .frontier import Frontier
-from evm_asm.opcode import Opcode
+from evm_asm.typing import Opcode
 
 
 class Homestead(Frontier):

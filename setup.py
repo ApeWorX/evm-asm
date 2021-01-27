@@ -10,6 +10,7 @@ extras_require = {
         "pytest==6.2.1",
         "pytest-xdist",
         "pytest-coverage",
+        "web3<6.0",
     ],
     "lint": [
         "black==20.8b1",
