@@ -75,6 +75,9 @@ def _split_metadata(bytecode: Bytecode) -> Tuple[Bytecode, Metadata]:
         return bytecode, Metadata(b"")
 
     metadata_length = int.from_bytes(bytecode[-1:], "big") + 2
+    if len(bytecode) < metadata_length:
+        return bytecode, Metadata(b"")
+
     # 0xa1, 0xa2 are known Solidity metadata start codes
     if bytecode[-metadata_length] in (161, 162):
         return (
