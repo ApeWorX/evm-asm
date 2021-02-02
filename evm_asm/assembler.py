@@ -119,6 +119,7 @@ def _split_string_literals(bytecode: Bytecode) -> Tuple[Bytecode, bytes]:
     reversed_bytecode = bytearray(bytecode)
     reversed_bytecode.reverse()
 
+    last_stopcode_idx = len(bytecode)
     for idx, code in enumerate(reversed_bytecode):
         # a contract must end in one of these
         if code in END_OPCODES:
