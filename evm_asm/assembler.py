@@ -136,7 +136,9 @@ def _split_string_literals(bytecode: Bytecode) -> Tuple[Bytecode, bytes]:
     return Bytecode(bytecode[:last_stopcode_idx]), bytecode[last_stopcode_idx:]
 
 
-def disassemble(evm: Fork, bytecode: Bytecode) -> Assembly:
+def disassemble(
+    evm: Fork, bytecode: Bytecode, include_metadata: bool = True
+) -> Assembly:
     bytecode, metadata = _split_metadata(bytecode)
     bytecode, string_literals = _split_string_literals(bytecode)
 
@@ -156,5 +158,5 @@ def disassemble(evm: Fork, bytecode: Bytecode) -> Assembly:
     if len(string_literals) > 0:
         yield string_literals  # String literals are at the end of the code
 
-    if metadata:
+    if include_metadata and metadata:
         yield metadata  # Metadata exists past the end of the code
