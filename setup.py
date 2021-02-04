@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages  # type: ignore
 
 
 extras_require = {
+    "cbor": ["cbor==5.2.0"],
     "test": [
         "py-evm==0.3.0a20",
         "pytest==6.2.1",
@@ -31,6 +32,7 @@ extras_require = {
     ],
 }
 
+extras_require["test"] = extras_require["test"] + extras_require["cbor"]
 extras_require["dev"] = (
     extras_require["dev"]
     + extras_require["test"]  # noqa: W504

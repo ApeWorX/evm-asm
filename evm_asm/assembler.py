@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Dict, Optional, Tuple
 
 from evm_asm.errors import (
     InvalidOpcodeInput,
@@ -14,6 +14,14 @@ from evm_asm.typing import (
 from evm_asm.forks import Fork
 
 
+END_OPCODES = (
+    0x00,  # STOP
+    0xF3,  # RETURN
+    0xFD,  # REVERT
+    0xFE,  # INVALID
+)
+
+
 def assemble(evm: Fork, assembly: Assembly) -> Bytecode:
     bytecode = bytearray(b"")
     assembly_iter = iter(assembly)
@@ -24,13 +32,7 @@ def assemble(evm: Fork, assembly: Assembly) -> Bytecode:
         if (
             isinstance(code, bytes)
             and last_opcode
-            and last_opcode.opcode_value
-            in (
-                0,  # STOP
-                243,  # RETURN
-                253,  # REVERT
-                254,  # INVALID
-            )
+            and last_opcode.opcode_value in END_OPCODES
         ):
             if len(code) > 0:
                 bytecode.extend(code)
@@ -69,34 +71,58 @@ def assemble(evm: Fork, assembly: Assembly) -> Bytecode:
     return Bytecode(bytecode)
 
 
-def _split_metadata(bytecode: Bytecode) -> Tuple[Bytecode, Metadata]:
-    # Pattern is `(0xa1|0xa2).*0x00.`, so 2nd to last byte must be 0x00
-    if bytecode[-2] != 0:
-        return bytecode, Metadata(b"")
+def valid_metadata(metadata: bytes) -> bool:
+    import cbor2 as cbor  # type: ignore
 
-    metadata_length = int.from_bytes(bytecode[-1:], "big") + 2
-    # 0xa1, 0xa2 are known Solidity metadata start codes
-    if bytecode[-metadata_length] in (161, 162):
+    try:
+        metadata = cbor.loads(metadata[:-2])  # NOTE: Ignore 2 length bytes at end
+    except MemoryError:
+        return False
+
+    if not isinstance(metadata, dict):
+        return False
+
+    if "bzzr0" not in metadata and "solc" not in metadata:
+        return False
+
+    return True
+
+
+def _split_metadata(bytecode: Bytecode) -> Tuple[Bytecode, Optional[Metadata]]:
+    # In Solidity, last 2 bytes is the length of the metadata (if applicable)
+    metadata_length = int.from_bytes(bytecode[-2:], "big") + 2
+    if len(bytecode) < metadata_length:
+        # Can't decode metadata with improper length
+        return bytecode, None
+
+    elif valid_metadata(bytecode[-metadata_length:]):
         return (
             Bytecode(bytecode[:-metadata_length]),
             Metadata(bytecode[-metadata_length:]),
         )
+
     else:
-        return bytecode, Metadata(b"")
+        return bytecode, None
+
+
+def get_metadata(bytecode: Bytecode) -> Dict:
+    import cbor2 as cbor  # type: ignore
+
+    _, metadata = _split_metadata(bytecode)
+    if metadata:
+        return cbor.loads(metadata[:-2])
+    else:
+        return {}
 
 
 def _split_string_literals(bytecode: Bytecode) -> Tuple[Bytecode, bytes]:
     reversed_bytecode = bytearray(bytecode)
     reversed_bytecode.reverse()
 
+    last_stopcode_idx = len(bytecode)
     for idx, code in enumerate(reversed_bytecode):
-        # Record the last "stop" opcode (a contract must end in one of these)
-        if code in (
-            0,  # STOP
-            243,  # RETURN
-            253,  # REVERT
-            254,  # INVALID
-        ):
+        # a contract must end in one of these
+        if code in END_OPCODES:
             # NOTE: Index is from end of bytecode
             last_stopcode_idx = len(bytecode) - idx
 
@@ -111,12 +137,9 @@ def _split_string_literals(bytecode: Bytecode) -> Tuple[Bytecode, bytes]:
     return Bytecode(bytecode[:last_stopcode_idx]), bytecode[last_stopcode_idx:]
 
 
-def get_metadata(bytecode: Bytecode) -> Metadata:
-    _, metadata = _split_metadata(bytecode)
-    return metadata
-
-
-def disassemble(evm: Fork, bytecode: Bytecode) -> Assembly:
+def disassemble(
+    evm: Fork, bytecode: Bytecode, include_metadata: bool = True
+) -> Assembly:
     bytecode, metadata = _split_metadata(bytecode)
     bytecode, string_literals = _split_string_literals(bytecode)
 
@@ -136,5 +159,5 @@ def disassemble(evm: Fork, bytecode: Bytecode) -> Assembly:
     if len(string_literals) > 0:
         yield string_literals  # String literals are at the end of the code
 
-    if len(metadata) > 0:
+    if include_metadata and metadata:
         yield metadata  # Metadata exists past the end of the code
