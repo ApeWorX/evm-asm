@@ -24,6 +24,7 @@ extras_require = {
         "Sphinx>=3.4.3,<4",
         "sphinx_rtd_theme>=0.5.1",
     ],
+    "ethervm": ["flask", "flask-table", "web3<6.0"],
     "dev": [
         "pytest-watch",
         "wheel",
