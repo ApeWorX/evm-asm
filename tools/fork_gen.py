@@ -61,10 +61,7 @@ for key, value in PY_EVM_FORKS.items():
         lines = 0
         for opcode, props in value.items():
             mnemonic = props.mnemonic.upper()
-            if (
-                mnemonic not in used_opcodes.keys()
-                or used_opcodes[mnemonic] != props.gas_cost
-            ):
+            if mnemonic not in used_opcodes.keys() or used_opcodes[mnemonic] != props.gas_cost:
                 print(
                     f'    {mnemonic} = Opcode("{mnemonic}", {props.gas_cost}, {"0x{:02X}".format(opcode)})'
                 )

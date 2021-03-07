@@ -42,9 +42,7 @@ class EvmForks:
         if fork_name in forks:
             return getattr(self, fork_name.upper())
 
-        raise TypeError(
-            f"'{fork_name}' is not a valid fork name, must be one of '{forks}'"
-        )
+        raise TypeError(f"'{fork_name}' is not a valid fork name, must be one of '{forks}'")
 
 
 evm_opcodes = EvmForks()

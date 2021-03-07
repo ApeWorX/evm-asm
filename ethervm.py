@@ -88,6 +88,4 @@ def show_assembly(
         else:
             return str(o)
 
-    return "\n".join(
-        convert_to_string(o) for o in disassemble(evm_opcodes[evm_version], bytecode)
-    )
+    return "\n".join(convert_to_string(o) for o in disassemble(evm_opcodes[evm_version], bytecode))

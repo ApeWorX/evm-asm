@@ -30,9 +30,7 @@ class Opcode:
         input_bytes = b""
         if self.input_size_bytes > 0:
             assert input_value, "Must have value"
-            assert (
-                0 <= input_value < 2 ** self.input_size_bytes
-            ), "Value outside of range"
+            assert 0 <= input_value < 2 ** self.input_size_bytes, "Value outside of range"
             input_bytes = input_value.to_bytes(self.input_size_bytes, "little")
 
         return Bytecode(bytes(self.opcode_value) + input_bytes)

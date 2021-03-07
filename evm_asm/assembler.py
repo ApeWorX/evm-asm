@@ -29,11 +29,7 @@ def assemble(evm: Fork, assembly: Assembly) -> Bytecode:
     last_opcode = None
     for code in assembly_iter:
         # Check if string literals or metadata included after end of code
-        if (
-            isinstance(code, bytes)
-            and last_opcode
-            and last_opcode.opcode_value in END_OPCODES
-        ):
+        if isinstance(code, bytes) and last_opcode and last_opcode.opcode_value in END_OPCODES:
             if len(code) > 0:
                 bytecode.extend(code)
             continue  # These are special cases
@@ -137,9 +133,7 @@ def _split_string_literals(bytecode: Bytecode) -> Tuple[Bytecode, bytes]:
     return Bytecode(bytecode[:last_stopcode_idx]), bytecode[last_stopcode_idx:]
 
 
-def disassemble(
-    evm: Fork, bytecode: Bytecode, include_metadata: bool = True
-) -> Assembly:
+def disassemble(evm: Fork, bytecode: Bytecode, include_metadata: bool = True) -> Assembly:
     bytecode, metadata = _split_metadata(bytecode)
     bytecode, string_literals = _split_string_literals(bytecode)
 
