@@ -2,6 +2,9 @@ on: ["push", "pull_request"]
 
 name: Test
 
+env:
+    WEB3_INFURA_PROJECT_ID: ${{ secrets.WEB3_INFURA_PROJECT_ID }}
+
 jobs:
     linting:
         runs-on: ubuntu-latest
