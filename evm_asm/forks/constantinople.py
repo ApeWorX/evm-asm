@@ -1,5 +1,6 @@
-from .byzantium import Byzantium
 from evm_asm.typing import Opcode
+
+from .byzantium import Byzantium
 
 
 class Constantinople(Byzantium):

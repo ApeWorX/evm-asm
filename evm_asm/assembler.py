@@ -1,18 +1,8 @@
 from typing import Dict, Optional, Tuple
 
-from evm_asm.errors import (
-    InvalidOpcodeInput,
-    UnsupportedOpcode,
-)
-from evm_asm.typing import (
-    Assembly,
-    Bytecode,
-    Metadata,
-    Opcode,
-    OpcodeValue,
-)
+from evm_asm.errors import InvalidOpcodeInput, UnsupportedOpcode
 from evm_asm.forks import Fork
-
+from evm_asm.typing import Assembly, Bytecode, Metadata, Opcode, OpcodeValue
 
 END_OPCODES = (
     0x00,  # STOP

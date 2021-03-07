@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Iterable, Optional, NewType, Union
-
+from typing import Iterable, NewType, Optional, Union
 
 # TODO https://ethervm.io/
 

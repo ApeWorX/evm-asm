@@ -1,17 +1,9 @@
-from typing import Dict, Iterator, Tuple
-
 import re
 from collections import OrderedDict
+from typing import Dict, Iterator, Tuple
 
-from evm_asm.errors import (
-    UnsupportedOpcode,
-)
-from evm_asm.typing import (
-    Mnemonic,
-    Opcode,
-    OpcodeLike,
-    OpcodeValue,
-)
+from evm_asm.errors import UnsupportedOpcode
+from evm_asm.typing import Mnemonic, Opcode, OpcodeLike, OpcodeValue
 
 
 class Fork:

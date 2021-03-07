@@ -1,6 +1,6 @@
 import pytest
-
 from eth.vm import forks as pyevm_forks
+
 from evm_asm import evm_opcodes
 
 

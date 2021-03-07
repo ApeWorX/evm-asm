@@ -1,5 +1,6 @@
-from .homestead import Homestead
 from evm_asm.typing import Opcode
+
+from .homestead import Homestead
 
 
 class TangerineWhistle(Homestead):

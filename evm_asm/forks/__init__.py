@@ -1,16 +1,15 @@
 from typing import Iterator
 
 from .base import Fork
-
-from .frontier import Frontier
-from .homestead import Homestead
-from .tangerine_whistle import TangerineWhistle
-from .spurious_dragon import SpuriousDragon
 from .byzantium import Byzantium
 from .constantinople import Constantinople
-from .petersburg import Petersburg
+from .frontier import Frontier
+from .homestead import Homestead
 from .istanbul import Istanbul
 from .muir_glacier import MuirGlacier
+from .petersburg import Petersburg
+from .spurious_dragon import SpuriousDragon
+from .tangerine_whistle import TangerineWhistle
 
 
 class EvmForks:

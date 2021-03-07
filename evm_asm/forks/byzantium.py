@@ -1,5 +1,6 @@
-from .spurious_dragon import SpuriousDragon
 from evm_asm.typing import Opcode
+
+from .spurious_dragon import SpuriousDragon
 
 
 class Byzantium(SpuriousDragon):

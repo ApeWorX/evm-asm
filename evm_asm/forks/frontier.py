@@ -1,5 +1,6 @@
-from .base import Fork
 from evm_asm.typing import Opcode
+
+from .base import Fork
 
 
 class Frontier(Fork):
