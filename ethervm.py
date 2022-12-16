@@ -1,19 +1,13 @@
-from flask import Flask
+from flask import Flask  # type: ignore
 from flask_table import Col, Table  # type: ignore
 from web3.auto.infura.goerli import w3 as goerli_w3
-from web3.auto.infura.kovan import w3 as kovan_w3
 from web3.auto.infura.mainnet import w3 as mainnet_w3
-from web3.auto.infura.rinkeby import w3 as rinkeby_w3
-from web3.auto.infura.ropsten import w3 as ropsten_w3
 
 from evm_asm import LATEST_VERSION, disassemble, evm_opcodes
 from evm_asm.typing import Bytecode
 
 AVAILABLE_WEB3 = {
     "mainnet": mainnet_w3,
-    "ropsten": ropsten_w3,
-    "rinkeby": rinkeby_w3,
-    "kovan": kovan_w3,
     "goerli": goerli_w3,
 }
 
