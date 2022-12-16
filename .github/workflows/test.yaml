@@ -2,9 +2,6 @@ on: ["push", "pull_request"]
 
 name: Test
 
-env:
-    WEB3_INFURA_PROJECT_ID: ${{ secrets.WEB3_INFURA_PROJECT_ID }}
-
 jobs:
     linting:
         runs-on: ubuntu-latest
@@ -76,6 +73,8 @@ jobs:
 
         - name: Run Tests
           run: pytest -m "not fuzzing" -n 0 -s --cov
+          env:
+              WEB3_INFURA_PROJECT_ID: ${{ secrets.WEB3_INFURA_PROJECT_ID }}
 
 #    fuzzing:
 #        runs-on: ubuntu-latest
