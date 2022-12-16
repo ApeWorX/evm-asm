@@ -1,6 +1,9 @@
 [build-system]
 requires = ["setuptools>=51.1.1", "wheel", "setuptools_scm[toml]>=5.0"]
 
+[tool.mypy]
+exclude = "build/"
+
 [tool.setuptools_scm]
 write_to = "evm_asm/version.py"
 
@@ -11,32 +14,17 @@ write_to = "evm_asm/version.py"
 
 [tool.black]
 line-length = 100
-target-version = ['py36', 'py37', 'py38']
+target-version = ['py38', 'py39', 'py310']
 include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | build
-  | dist
-  | env
-  | venv
-)/
-'''
 
 [tool.pytest.ini_options]
 addopts = """
     -n auto
-	--cov-branch
-	--cov-report term
-	--cov-report html
-	--cov-report xml
-	--cov=evm_asm
+    --cov-branch
+    --cov-report term
+    --cov-report html
+    --cov-report xml
+    --cov=evm_asm
 """
 python_files = "test_*.py"
 testpaths = "tests"
@@ -46,7 +34,5 @@ markers = "fuzzing: Run Hypothesis fuzz test suite"
 line_length = 100
 force_grid_wrap = 0
 include_trailing_comma = true
-known_third_party = ["hypothesis"]
-known_first_party = ["evm_asm"]
 multi_line_output = 3
 use_parentheses = true
