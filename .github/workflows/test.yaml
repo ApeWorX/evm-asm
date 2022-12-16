@@ -56,7 +56,7 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest, macos-latest]   # eventually add `windows-latest`
-                python-version: [3.8, 3.9, "3.10"]
+                python-version: [3.8, 3.9] #, "3.10"] NOTE: Bug w/ Web3py and 3.10
 
         steps:
         - uses: actions/checkout@v2
