@@ -68,10 +68,16 @@ def valid_metadata(metadata: bytes) -> bool:
     if not isinstance(metadata, dict):
         return False
 
-    if "bzzr0" not in metadata and "solc" not in metadata:
-        return False
+    if "bzzr0" in metadata or "solc" in metadata:
+        # solc v0.4.17 and greater
+        return True
 
-    return True
+    elif "vyper" in metadata:
+        # vyper v0.3.4 and greater
+        return True
+
+    # Unknown/improper Metadata keys
+    return False
 
 
 def _split_metadata(bytecode: Bytecode) -> Tuple[Bytecode, Optional[Metadata]]:
